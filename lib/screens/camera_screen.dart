@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:visionsnap/core/theme/glass_theme.dart';
-import 'dart:ui' as ui;
+import '../core/theme/glass_theme.dart';
+import '../widgets/camera/scanning_area.dart';
+import '../widgets/camera/camera_controls.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -37,11 +38,15 @@ class _CameraScreenState extends State<CameraScreen> with TickerProviderStateMix
     return Scaffold(
       body: Stack(
         children: [
-          // Simulated Camera Preview (Deep Navy with subtle mesh)
+          // Simulated Camera Preview
           GlassTheme.meshBackground(),
           
           // Scanning HUD
-          _buildScanningHUD(),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.2),
+            ),
+          ),
 
           // Overlay Content
           SafeArea(
@@ -49,21 +54,13 @@ class _CameraScreenState extends State<CameraScreen> with TickerProviderStateMix
               children: [
                 _buildHeader(context),
                 const Spacer(),
-                _buildScanningArea(),
+                ScanningArea(scanLineAnimation: _scanLineAnimation),
                 const Spacer(),
-                _buildControls(),
+                const CameraControls(),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildScanningHUD() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2),
       ),
     );
   }
@@ -103,133 +100,6 @@ class _CameraScreenState extends State<CameraScreen> with TickerProviderStateMix
           _buildCircularBtn(Icons.more_horiz_rounded),
         ],
       ),
-    );
-  }
-
-  Widget _buildScanningArea() {
-    return Container(
-      width: 280,
-      height: 380,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
-      ),
-      child: Stack(
-        children: [
-          // Corner Brackets
-          _buildCorner(0, 0),
-          _buildCorner(1, 0),
-          _buildCorner(0, 1),
-          _buildCorner(1, 1),
-
-          // Scanning Line
-          AnimatedBuilder(
-            animation: _scanLineAnimation,
-            builder: (context, child) {
-              return Positioned(
-                top: 380 * _scanLineAnimation.value,
-                left: 20,
-                right: 20,
-                child: Container(
-                  height: 2,
-                  decoration: BoxDecoration(
-                    color: GlassTheme.accentBlue,
-                    boxShadow: [
-                      BoxShadow(
-                        color: GlassTheme.accentBlue.withOpacity(0.5),
-                        blurRadius: 15,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCorner(int x, int y) {
-    return Positioned(
-      top: y == 0 ? 0 : null,
-      bottom: y == 1 ? 0 : null,
-      left: x == 0 ? 0 : null,
-      right: x == 1 ? 0 : null,
-      child: Container(
-        width: 30,
-        height: 30,
-        decoration: BoxDecoration(
-          border: Border(
-            top: y == 0 ? const BorderSide(color: GlassTheme.accentBlue, width: 4) : BorderSide.none,
-            bottom: y == 1 ? const BorderSide(color: GlassTheme.accentBlue, width: 4) : BorderSide.none,
-            left: x == 0 ? const BorderSide(color: GlassTheme.accentBlue, width: 4) : BorderSide.none,
-            right: x == 1 ? const BorderSide(color: GlassTheme.accentBlue, width: 4) : BorderSide.none,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildControls() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 40),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildNavBtn(Icons.photo_library_outlined, 'Gallery'),
-          const SizedBox(width: 40),
-          _buildCaptureButton(),
-          const SizedBox(width: 40),
-          _buildNavBtn(Icons.flash_on_rounded, 'Flash'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCaptureButton() {
-    return Container(
-      width: 80,
-      height: 80,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 4),
-      ),
-      padding: const EdgeInsets.all(6),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavBtn(IconData icon, String label) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
-          ),
-          child: Icon(icon, color: Colors.white, size: 22),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
     );
   }
 
