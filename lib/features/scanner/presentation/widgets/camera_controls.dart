@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../screens/result_screen.dart';
+import 'package:visionsnap/features/results/presentation/pages/result_screen.dart';
 
 class CameraControls extends StatelessWidget {
   const CameraControls({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/glass_theme.dart';
-import '../../models/scanned_item.dart';
+import '../../../../core/theme/glass_theme.dart';
+import '../../data/models/scanned_item.dart';
 
 class HistoryCard extends StatelessWidget {
   final ScannedItem item;

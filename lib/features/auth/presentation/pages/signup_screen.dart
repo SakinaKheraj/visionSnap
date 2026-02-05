@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/glass_theme.dart';
-import '../../widgets/auth/auth_text_field.dart';
-import '../main_screen.dart';
+import '../../../../core/theme/glass_theme.dart';
+import '../widgets/auth_text_field.dart';
+import 'package:visionsnap/features/home/presentation/pages/main_screen.dart';
 import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -127,7 +127,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         onTap: () {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            MaterialPageRoute(builder: (context) => LoginScreen()),
                           );
                         },
                         child: const Text(
@@ -186,7 +186,7 @@ class _SignupScreenState extends State<SignupScreen> {
         onPressed: () {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const MainScreen()),
+            MaterialPageRoute(builder: (context) => MainScreen()),
             (route) => false,
           );
         },

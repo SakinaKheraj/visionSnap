@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'screens/main_screen.dart';
-import 'screens/auth/signup_screen.dart';
+import 'features/auth/presentation/pages/signup_screen.dart';
 import 'core/theme/glass_theme.dart';
 
 void main() {

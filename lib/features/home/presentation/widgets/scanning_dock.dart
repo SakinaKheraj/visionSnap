@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/glass_theme.dart';
-import '../../screens/camera_screen.dart';
+import '../../../../core/theme/glass_theme.dart';
+import 'package:visionsnap/features/scanner/presentation/pages/camera_screen.dart';
 
 class ScanningDock extends StatelessWidget {
   const ScanningDock({super.key});

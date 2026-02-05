@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-import '../../core/theme/glass_theme.dart';
+import '../../../../core/theme/glass_theme.dart';
 
 class BottomNav extends StatelessWidget {
   final int selectedIndex;
@@ -66,4 +66,3 @@ class BottomNav extends StatelessWidget {
     );
   }
 }
-

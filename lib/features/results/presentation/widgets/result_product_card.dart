@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/glass_theme.dart';
-import '../../models/scan_result_product.dart';
+import '../../../../core/theme/glass_theme.dart';
+import '../../data/models/scan_result_product.dart';
 
 class ResultProductCard extends StatelessWidget {
   final ScanResultProduct product;
@@ -143,4 +143,3 @@ class ResultProductCard extends StatelessWidget {
     );
   }
 }
-

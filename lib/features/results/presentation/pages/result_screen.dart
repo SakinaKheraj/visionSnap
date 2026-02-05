@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../core/theme/glass_theme.dart';
-import '../models/scan_result_product.dart';
-import '../widgets/results/result_product_card.dart';
+import '../../../../core/theme/glass_theme.dart';
+import '../../data/models/scan_result_product.dart';
+import '../widgets/result_product_card.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -270,4 +270,3 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 }
-

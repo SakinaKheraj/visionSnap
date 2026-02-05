@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-import '../../core/theme/glass_theme.dart';
+import '../../../../core/theme/glass_theme.dart';
 
 class ProductCard extends StatelessWidget {
   final String title;

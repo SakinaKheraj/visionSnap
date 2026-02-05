@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/glass_theme.dart';
+import '../../../../core/theme/glass_theme.dart';
 
 class AuthTextField extends StatelessWidget {
   final String label;
@@ -49,7 +49,7 @@ class AuthTextField extends StatelessWidget {
               prefixIcon: Icon(prefixIcon, color: Colors.white38, size: 20),
               suffixIcon: suffixIcon,
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             ),
           ),
         ),

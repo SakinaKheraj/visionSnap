@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../core/theme/glass_theme.dart';
-import '../widgets/home/home_header.dart';
-import '../widgets/home/product_card.dart';
-import '../widgets/home/scanning_dock.dart';
-import '../widgets/home/bottom_nav.dart';
+import '../../../../core/theme/glass_theme.dart';
+import '../widgets/home_header.dart';
+import '../widgets/product_card.dart';
+import '../widgets/scanning_dock.dart';
+import '../widgets/bottom_nav.dart';
 
-import 'history_screen.dart';
+import 'package:visionsnap/features/history/presentation/pages/history_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -131,5 +131,3 @@ class HomeContent extends StatelessWidget {
     );
   }
 }
-
-

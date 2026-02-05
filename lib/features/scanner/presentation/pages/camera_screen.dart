@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../core/theme/glass_theme.dart';
-import '../widgets/camera/scanning_area.dart';
-import '../widgets/camera/camera_controls.dart';
+import '../../../../core/theme/glass_theme.dart';
+import '../widgets/scanning_area.dart';
+import '../widgets/camera_controls.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
