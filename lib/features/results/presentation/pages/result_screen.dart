@@ -252,8 +252,8 @@ class _ResultScreenState extends State<ResultScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: const [
                   Icon(Icons.camera_alt_rounded, color: Colors.white, size: 20),
-                  const SizedBox(width: 10),
-                  const Text(
+                  SizedBox(width: 10),
+                  Text(
                     'Snap New Photo',
                     style: TextStyle(
                       color: Colors.white,

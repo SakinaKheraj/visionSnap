@@ -90,9 +90,9 @@ class HomeContent extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {},
-                child: const Text(
+                child: Text(
                   'View All',
-                  style: TextStyle(color: GlassTheme.accentBlue),
+                  style: const TextStyle(color: GlassTheme.accentBlue),
                 ),
               ),
             ],
