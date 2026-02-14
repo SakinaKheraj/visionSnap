@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:visionsnap/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:visionsnap/features/auth/presentation/bloc/auth_state.dart';
+import 'package:visionsnap/features/auth/presentation/pages/login_screen.dart';
 import '../../../../core/theme/glass_theme.dart';
 import '../widgets/home_header.dart';
 import '../widgets/product_card.dart';
@@ -20,22 +24,37 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const HomeContent(),
     const HistoryScreen(),
-    const Center(child: Text('Saved Items', style: TextStyle(color: Colors.white))),
-    const Center(child: Text('Profile', style: TextStyle(color: Colors.white))),
+    const Center(
+      child: Text('Saved Items', style: TextStyle(color: Colors.white)),
+    ),
+    const Center(
+      child: Text('Profile', style: TextStyle(color: Colors.white)),
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNav(
-        selectedIndex: _selectedIndex,
-        onItemSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is Unauthenticated) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: _pages[_selectedIndex],
+        bottomNavigationBar: BottomNav(
+          selectedIndex: _selectedIndex,
+          onItemSelected: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
       ),
     );
   }

@@ -8,6 +8,9 @@ class AuthTextField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final Widget? suffixIcon;
+  final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
+  final bool enabled;
 
   const AuthTextField({
     super.key,
@@ -17,6 +20,9 @@ class AuthTextField extends StatefulWidget {
     this.isPassword = false,
     this.controller,
     this.suffixIcon,
+    this.validator,
+    this.keyboardType,
+    this.enabled = true,
   });
 
   @override
@@ -36,7 +42,9 @@ class _AuthTextFieldState extends State<AuthTextField> {
           child: Text(
             widget.label,
             style: TextStyle(
-              color: _isFocused ? GlassTheme.accentBlue : Colors.white.withOpacity(0.3),
+              color: _isFocused
+                  ? GlassTheme.accentBlue
+                  : Colors.white.withOpacity(0.3),
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -44,38 +52,72 @@ class _AuthTextFieldState extends State<AuthTextField> {
           ),
         ),
         const SizedBox(height: 10),
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          decoration: BoxDecoration(
-            color: _isFocused ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.02),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: _isFocused ? GlassTheme.accentBlue.withOpacity(0.4) : Colors.white.withOpacity(0.05),
-              width: 1.0,
+        Focus(
+          onFocusChange: (focus) => setState(() => _isFocused = focus),
+          child: TextFormField(
+            controller: widget.controller,
+            obscureText: widget.isPassword,
+            validator: widget.validator,
+            keyboardType: widget.keyboardType,
+            enabled: widget.enabled,
+            cursorColor: Colors.white,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
             ),
-          ),
-          child: Focus(
-            onFocusChange: (focus) => setState(() => _isFocused = focus),
-            child: TextField(
-              controller: widget.controller,
-              obscureText: widget.isPassword,
-              cursorColor: Colors.white,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: _isFocused
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.white.withOpacity(0.02),
+              hintText: widget.hint,
+              hintStyle: TextStyle(
+                color: Colors.white.withOpacity(0.15),
+                fontSize: 14,
               ),
-              decoration: InputDecoration(
-                hintText: widget.hint,
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.15), fontSize: 14),
-                prefixIcon: Icon(
-                  widget.prefixIcon, 
-                  color: _isFocused ? GlassTheme.accentBlue : Colors.white.withOpacity(0.2), 
-                  size: 20,
+              prefixIcon: Icon(
+                widget.prefixIcon,
+                color: _isFocused
+                    ? GlassTheme.accentBlue
+                    : Colors.white.withOpacity(0.2),
+                size: 20,
+              ),
+              suffixIcon: widget.suffixIcon,
+              contentPadding: const EdgeInsets.all(18),
+              // Default Border
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+              ),
+              // Focused Border
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(
+                  color: GlassTheme.accentBlue,
+                  width: 1.2,
                 ),
-                suffixIcon: widget.suffixIcon,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              ),
+              // Error Border
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: Colors.redAccent.withOpacity(0.5),
+                ),
+              ),
+              // Focused Error Border
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(
+                  color: Colors.redAccent,
+                  width: 1.2,
+                ),
+              ),
+              errorStyle: const TextStyle(
+                color: Colors.redAccent,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                height: 1.2,
               ),
             ),
           ),

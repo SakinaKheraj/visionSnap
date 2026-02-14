@@ -4,13 +4,13 @@ import 'package:visionsnap/core/theme/glass_theme.dart';
 class AuthFooter extends StatelessWidget {
   final String prompt;
   final String actionText;
-  final VoidCallback onAction;
+  final VoidCallback? onAction;
 
   const AuthFooter({
-    super.key, 
-    required this.prompt, 
-    required this.actionText, 
-    required this.onAction
+    super.key,
+    required this.prompt,
+    required this.actionText,
+    this.onAction,
   });
 
   @override
@@ -21,7 +21,10 @@ class AuthFooter extends StatelessWidget {
         children: [
           Text(
             "$prompt ",
-            style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 13),
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.3),
+              fontSize: 13,
+            ),
           ),
           GestureDetector(
             onTap: onAction,

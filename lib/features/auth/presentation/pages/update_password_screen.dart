@@ -7,30 +7,32 @@ import 'package:visionsnap/features/auth/presentation/bloc/auth_state.dart';
 import 'package:visionsnap/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:visionsnap/features/auth/presentation/widgets/auth_header.dart';
 import 'package:visionsnap/features/auth/presentation/widgets/auth_primary_button.dart';
-import 'package:visionsnap/features/auth/presentation/widgets/auth_footer.dart';
-import 'package:visionsnap/features/auth/presentation/widgets/auth_back_button.dart';
+import 'login_screen.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class UpdatePasswordScreen extends StatefulWidget {
+  const UpdatePasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<UpdatePasswordScreen> createState() => _UpdatePasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _onResetPressed() {
+  void _onUpdatePressed() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
-        ResetPasswordRequested(_emailController.text.trim()),
+        UpdatePasswordRequested(_passwordController.text),
       );
     }
   }
@@ -43,9 +45,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         listener: (context, state) {
           if (state is AuthError) {
             GlassTheme.showSnackBar(context, state.message);
-          } else if (state is PasswordResetEmailSent) {
+          } else if (state is PasswordUpdated) {
             GlassTheme.showSnackBar(context, state.message, isError: false);
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+              (route) => false,
+            );
           }
         },
         builder: (context, state) {
@@ -65,24 +71,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const AuthBackButton(),
                         const SizedBox(height: 60),
                         const AuthHeader(
-                          tag: 'RECOVERY',
-                          title: 'Reset Password',
+                          tag: 'SECURITY',
+                          title: 'New Password',
                           subtitle:
-                              'Enter your email to receive recovery instructions.',
+                              'Create a secure password to protect your account.',
                         ),
                         const SizedBox(height: 48),
                         _buildForm(isLoading),
-                        const SizedBox(height: 40),
-                        AuthFooter(
-                          prompt: "Remember your password?",
-                          actionText: 'Login',
-                          onAction: isLoading
-                              ? null
-                              : () => Navigator.pop(context),
-                        ),
                       ],
                     ),
                   ),
@@ -100,29 +97,53 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       child: Column(
         children: [
           AuthTextField(
-            label: 'EMAIL',
-            hint: 'name@example.com',
-            prefixIcon: Icons.alternate_email_rounded,
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
+            label: 'NEW PASSWORD',
+            hint: '••••••••',
+            prefixIcon: Icons.lock_outline_rounded,
+            isPassword: _obscurePassword,
+            controller: _passwordController,
             enabled: !isLoading,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                color: Colors.white24,
+                size: 18,
+              ),
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email';
+                return 'Please enter a new password';
               }
-              if (!RegExp(
-                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-              ).hasMatch(value)) {
-                return 'Please enter a valid email';
+              if (value.length < 6) {
+                return 'Password must be at least 6 characters';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          AuthTextField(
+            label: 'CONFIRM PASSWORD',
+            hint: '••••••••',
+            prefixIcon: Icons.lock_reset_rounded,
+            isPassword: _obscurePassword,
+            controller: _confirmPasswordController,
+            enabled: !isLoading,
+            validator: (value) {
+              if (value != _passwordController.text) {
+                return 'Passwords do not match';
               }
               return null;
             },
           ),
           const SizedBox(height: 40),
           AuthPrimaryButton(
-            text: 'Send Instructions',
+            text: 'Update Password',
             isLoading: isLoading,
-            onPressed: _onResetPressed,
+            onPressed: _onUpdatePressed,
           ),
         ],
       ),

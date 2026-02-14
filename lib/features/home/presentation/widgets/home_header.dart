@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:visionsnap/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:visionsnap/features/auth/presentation/bloc/auth_event.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -18,7 +21,11 @@ class HomeHeader extends StatelessWidget {
                   color: Colors.white.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.camera_rounded, color: Colors.white, size: 24),
+                child: const Icon(
+                  Icons.camera_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -32,17 +39,33 @@ class HomeHeader extends StatelessWidget {
               ),
             ],
           ),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
-              image: const DecorationImage(
-                image: NetworkImage('https://api.dicebear.com/7.x/avataaars/png?seed=Felix'),
-                fit: BoxFit.cover,
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(LogoutRequested());
+                },
+                icon: Icon(
+                  Icons.logout_rounded,
+                  color: Colors.white.withOpacity(0.6),
+                  size: 20,
+                ),
               ),
-            ),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  image: const DecorationImage(
+                    image: NetworkImage(
+                      'https://api.dicebear.com/7.x/avataaars/png?seed=Felix',
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
