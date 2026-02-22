@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/glass_theme.dart';
-import 'package:visionsnap/features/scanner/presentation/pages/camera_screen.dart';
+import 'package:visionsnap/features/image_upload/presentation/pages/camera_screen.dart';
+import 'package:visionsnap/features/history/presentation/pages/history_screen.dart';
 
 class ScanningDock extends StatelessWidget {
   const ScanningDock({super.key});
@@ -21,11 +22,21 @@ class ScanningDock extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildDockButton(Icons.photo_library_outlined, false),
+            _buildDockButton(
+              context,
+              Icons.photo_library_outlined,
+              false,
+              isGallery: true,
+            ),
             const SizedBox(width: 24),
             _buildMainScanButton(context),
             const SizedBox(width: 24),
-            _buildDockButton(Icons.flash_on_rounded, false),
+            _buildDockButton(
+              context,
+              Icons.history_rounded,
+              false,
+              isHistory: true,
+            ),
           ],
         ),
         const SizedBox(height: 24),
@@ -43,16 +54,42 @@ class ScanningDock extends StatelessWidget {
     );
   }
 
-  Widget _buildDockButton(IconData icon, bool isActive) {
-    return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        color: isActive ? GlassTheme.accentBlue : Colors.white.withOpacity(0.05),
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+  Widget _buildDockButton(
+    BuildContext context,
+    IconData icon,
+    bool isActive, {
+    bool isGallery = false,
+    bool isHistory = false,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        if (isGallery) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  const CameraScreen(openGalleryInitially: true),
+            ),
+          );
+        } else if (isHistory) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HistoryScreen()),
+          );
+        }
+      },
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: isActive
+              ? GlassTheme.accentBlue
+              : Colors.white.withOpacity(0.05),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
+        ),
+        child: Icon(icon, color: Colors.white, size: 24),
       ),
-      child: Icon(icon, color: Colors.white, size: 24),
     );
   }
 
@@ -69,7 +106,10 @@ class ScanningDock extends StatelessWidget {
         height: 88,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: GlassTheme.accentBlue.withOpacity(0.3), width: 2),
+          border: Border.all(
+            color: GlassTheme.accentBlue.withOpacity(0.3),
+            width: 2,
+          ),
         ),
         padding: const EdgeInsets.all(8),
         child: Container(
@@ -84,7 +124,11 @@ class ScanningDock extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(Icons.crop_free_rounded, color: Colors.white, size: 36),
+          child: const Icon(
+            Icons.crop_free_rounded,
+            color: Colors.white,
+            size: 36,
+          ),
         ),
       ),
     );

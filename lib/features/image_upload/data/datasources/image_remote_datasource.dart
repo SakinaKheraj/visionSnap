@@ -71,14 +71,14 @@ class ImageRemoteDatasourceImpl extends ImageRemoteDatasource {
       };
 
       final response = await supabaseClient
-                          .from('uploads')
-                          .insert(uploadData)
-                          .select()
-                          .single();
-                
+          .from('uploads')
+          .insert(uploadData)
+          .select()
+          .single();
+
       return UploadModel.fromJson(response);
     } catch (e) {
-      throw ServerException('Uplaod Failed; ${e.toString()}');
+      throw ServerException('Upload Failed: ${e.toString()}');
     }
   }
 }
