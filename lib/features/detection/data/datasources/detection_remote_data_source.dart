@@ -37,20 +37,24 @@ class DetectionRemoteDataSourceImpl implements DetectionRemoteDataSource {
           'requests': [
             {
               'image': {
-                'source': {'imageUri': imageUrl}
+                'source': {'imageUri': imageUrl},
               },
               'features': [
                 {'type': 'LABEL_DETECTION', 'maxResults': 10},
                 {'type': 'OBJECT_LOCALIZATION', 'maxResults': 10},
               ],
-            }
+            },
           ],
         },
       );
 
       // Check if API call was successful
-      if(response.statusCode != 200) {
-        throw ServerException('Vision API request failed');
+      if (response.statusCode != 200) {
+        print('Vision API Request failed: ${response.statusCode}');
+        print('Vision API Message: ${response.data}');
+        throw ServerException(
+          'Vision API request failed: ${response.statusCode}',
+        );
       }
 
       print("Got response from Google Vision API");
@@ -62,15 +66,17 @@ class DetectionRemoteDataSourceImpl implements DetectionRemoteDataSource {
       final List<DetectedItemModel> detectedItems = [];
 
       // OBJECT_LOCALIZATION (gives us positions)
-      if(annotations['localizedObjectAnnotations'] != null) {
-        print("Found ${annotations['localizedObjectAnnotaions'].length} objects");
+      if (annotations['localizedObjectAnnotations'] != null) {
+        print(
+          "Found ${annotations['localizedObjectAnnotations'].length} objects",
+        );
 
-        for(var obj in annotations['localizedObjectAnnotations']) {
+        for (var obj in annotations['localizedObjectAnnotations']) {
           // Create object to save to supabase
           final itemData = {
             'upload_id': uploadId,
             'label': obj['name'],
-            'confiedence': obj['score'],
+            'confidence': obj['score'],
             'bounding_box': {
               'vertices': obj['boundingPoly']['normalizedVertices'],
             },
@@ -78,48 +84,58 @@ class DetectionRemoteDataSourceImpl implements DetectionRemoteDataSource {
 
           // Save to database
           final saved = await supabaseClient
-                        .from('detected_items')
-                        .insert(itemData)
-                        .select()
-                        .single();
+              .from('detected_items')
+              .insert(itemData)
+              .select()
+              .single();
 
           // Convert JSON to model
           detectedItems.add(DetectedItemModel.fromJson(saved));
         }
       }
 
-    // If no objects found, use LABEL_DETECTION
-    if(detectedItems.isEmpty && annotations['labelAnnotations']!=null) {
-      print('Found ${annotations['labelAnnotations'].length} labels');
+      // If no objects found, use LABEL_DETECTION
+      if (detectedItems.isEmpty && annotations['labelAnnotations'] != null) {
+        print('Found ${annotations['labelAnnotations'].length} labels');
 
-      // Take top 5 labels
-      for(var label in annotations['labelAnnotations'].take(5)) {
-        final itemData = {
-          'upload_id': uploadId,
-          'label': label['descrption'],
-          'confidence': label['score'],
-        };
+        // Take top 5 labels
+        for (var label in annotations['labelAnnotations'].take(5)) {
+          final itemData = {
+            'upload_id': uploadId,
+            'label': label['description'],
+            'confidence': label['score'],
+          };
 
-        final saved = await supabaseClient
-                      .from('detected_items')
-                      .insert(itemData)
-                      .select()
-                      .single();
+          final saved = await supabaseClient
+              .from('detected_items')
+              .insert(itemData)
+              .select()
+              .single();
 
-        detectedItems.add(DetectedItemModel.fromJson(saved));
+          detectedItems.add(DetectedItemModel.fromJson(saved));
+        }
       }
-    }
 
-    // Update upload status
-    await supabaseClient
-        .from('uploads')
-        .update({'processing_status': 'completed'})
-        .eq('id', uploadId);
+      // Update upload status
+      await supabaseClient
+          .from('uploads')
+          .update({'processing_status': 'completed'})
+          .eq('id', uploadId);
 
       print('Saved ${detectedItems.length} items to database');
       return detectedItems;
+    } on DioException catch (e) {
+      print('Vision API Error: ${e.response?.statusCode}');
+      print('Vision API Message: ${e.response?.data}');
 
-    } catch(e) {
+      await supabaseClient
+          .from('uploads')
+          .update({'processing_status': 'failed'})
+          .eq('id', uploadId);
+
+      final message = e.response?.data?['error']?['message'] ?? e.message;
+      throw ServerException("Detection Failed: $message");
+    } catch (e) {
       await supabaseClient
           .from('uploads')
           .update({'processing_status': 'failed'})
@@ -132,21 +148,20 @@ class DetectionRemoteDataSourceImpl implements DetectionRemoteDataSource {
   @override
   Future<List<DetectedItemModel>> getDetectedItems(String uploadId) async {
     try {
-      print('Loadind detected items for upload: $uploadId');
+      print('Loading detected items for upload: $uploadId');
 
       final response = await supabaseClient
-                        .from('detected_items')
-                        .select()
-                        .eq('upload_id', uploadId);
+          .from('detected_items')
+          .select()
+          .eq('upload_id', uploadId);
 
       final items = (response as List)
-                .map((json) => DetectedItemModel.fromJson(json))
-                .toList();
+          .map((json) => DetectedItemModel.fromJson(json))
+          .toList();
 
       print('Found ${items.length} items');
       return items;
-
-    } catch(e) {
+    } catch (e) {
       throw ServerException("Failed to load detected items ${e.toString()}");
     }
   }

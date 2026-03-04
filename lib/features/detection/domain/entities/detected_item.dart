@@ -10,7 +10,7 @@ class DetectedItem extends Equatable {
   final Map<String, dynamic>? attributes;
   final DateTime createdAt;
 
-  DetectedItem({
+  const DetectedItem({
     required this.id,
     required this.uploadId,
     required this.label,
@@ -36,7 +36,7 @@ class DetectionResult extends Equatable {
   final List<DetectedItem> items;
   final String status;
 
-  DetectionResult({
+  const DetectionResult({
     required this.uploadId,
     required this.items,
     required this.status,

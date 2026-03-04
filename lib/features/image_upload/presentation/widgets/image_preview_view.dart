@@ -64,7 +64,7 @@ class ImagePreviewView extends StatelessWidget {
                         ),
                       )
                     : const Text(
-                        'Analyze Selection',
+                        'Upload & Detect Items',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

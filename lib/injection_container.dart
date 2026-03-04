@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 
 import 'core/network/network_info.dart';
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
@@ -21,6 +22,14 @@ import 'features/image_upload/domain/repositories/image_repository.dart';
 import 'features/image_upload/domain/usecases/upload_image.dart';
 import 'features/image_upload/domain/usecases/get_user_uploads.dart';
 import 'features/image_upload/presentation/bloc/upload_bloc.dart';
+
+// Detection
+import 'features/detection/data/datasources/detection_remote_data_source.dart';
+import 'features/detection/data/repository/detection_repository_impl.dart';
+import 'features/detection/domain/repositories/detection_repository.dart';
+import 'features/detection/domain/usecases/detect_items.dart';
+import 'features/detection/presentation/bloc/detection_bloc.dart';
+import 'features/detection/data/datasources/detection_mock_data_source.dart';
 
 final sl = GetIt.instance;
 
@@ -63,6 +72,7 @@ Future<void> init() async {
   // Supabase initialization (assuming it will be initialized in main before calling init)
   sl.registerLazySingleton(() => Supabase.instance.client);
   sl.registerLazySingleton(() => Connectivity());
+  sl.registerLazySingleton(() => Dio());
 
   //! Features - Image Upload
   // Bloc
@@ -86,5 +96,31 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<ImageRemoteDatasource>(
     () => ImageRemoteDatasourceImpl(sl()),
+  );
+
+  //! Features - Detection
+  // Bloc
+  sl.registerFactory(() => DetectionBloc(detectItems: sl()));
+
+  // Use Cases
+  sl.registerLazySingleton(() => DetectItems(sl()));
+
+  // Repository
+  sl.registerLazySingleton<DetectionRepository>(
+    () => DetectionRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+      useMockData: true,
+      mockDataSource: sl(),
+    ),
+  );
+
+  // Mock data source (NEW)
+  sl.registerLazySingleton<DetectionMockDataSource>(
+    () => DetectionMockDataSource(supabaseClient: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<DetectionRemoteDataSource>(
+    () => DetectionRemoteDataSourceImpl(dio: sl(), supabaseClient: sl()),
   );
 }

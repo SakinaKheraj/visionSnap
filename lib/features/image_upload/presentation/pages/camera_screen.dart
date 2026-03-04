@@ -8,6 +8,10 @@ import 'package:visionsnap/core/theme/glass_theme.dart';
 import 'package:visionsnap/features/image_upload/presentation/bloc/upload_bloc.dart';
 import 'package:visionsnap/features/image_upload/presentation/bloc/upload_event.dart';
 import 'package:visionsnap/features/image_upload/presentation/bloc/upload_state.dart';
+import 'package:visionsnap/features/detection/presentation/bloc/detection_bloc.dart';
+import 'package:visionsnap/features/detection/presentation/bloc/detection_event.dart';
+import 'package:visionsnap/features/detection/presentation/bloc/detection_state.dart';
+import 'package:visionsnap/features/results/presentation/pages/result_screen.dart';
 import 'package:visionsnap/main.dart';
 
 import '../widgets/camera_header.dart';
@@ -143,68 +147,105 @@ class _CameraScreenState extends State<CameraScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: BlocConsumer<UploadBloc, UploadState>(
-        listener: (context, state) {
-          if (state is UploadSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Image uploaded successfully!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-            Navigator.pop(context);
-          } else if (state is UploadError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Upload Failed: ${state.message}'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (_selectedImage != null) {
-            return ImagePreviewView(
-              imageFile: _selectedImage!,
-              onUpload: _uploadImage,
-              onRetake: _initializeCamera,
-              isLoading: state is UploadLoading,
-            );
-          }
-
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              if (_isCameraInitialized && _controller != null)
-                OverflowBox(
-                  maxWidth: double.infinity,
-                  child: AspectRatio(
-                    aspectRatio: 1 / _controller!.value.aspectRatio,
-                    child: CameraPreview(_controller!),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<DetectionBloc, DetectionState>(
+            listener: (context, state) {
+              if (state is DetectionSuccess) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ResultScreen()),
+                );
+              } else if (state is DetectionError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Detection Failed: ${state.msg}'),
+                    backgroundColor: Colors.red,
                   ),
-                )
-              else
-                GlassTheme.meshBackground(),
+                );
+              }
+            },
+          ),
+          BlocListener<UploadBloc, UploadState>(
+            listener: (context, state) {
+              if (state is UploadSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Image uploaded! Starting detection...'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+                // Trigger Detection
+                context.read<DetectionBloc>().add(
+                  DetectItemsEvent(
+                    imageUrl: state.upload.imageUrl,
+                    uploadId: state.upload.id,
+                  ),
+                );
+              } else if (state is UploadError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Upload Failed: ${state.message}'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<UploadBloc, UploadState>(
+          builder: (context, uploadState) {
+            return BlocBuilder<DetectionBloc, DetectionState>(
+              builder: (context, detectionState) {
+                final bool isBusy =
+                    uploadState is UploadLoading ||
+                    detectionState is DetectionLoading;
 
-              if (_isCameraInitialized) const CameraOverlay(),
+                if (_selectedImage != null) {
+                  return ImagePreviewView(
+                    imageFile: _selectedImage!,
+                    onUpload: _uploadImage,
+                    onRetake: _initializeCamera,
+                    isLoading: isBusy,
+                  );
+                }
 
-              SafeArea(
-                child: Column(
+                return Stack(
+                  fit: StackFit.expand,
                   children: [
-                    CameraHeader(onClose: () => Navigator.pop(context)),
-                    const Spacer(),
-                    CameraControls(
-                      onGalleryTap: () => _pickImage(ImageSource.gallery),
-                      onCaptureTap: _takePicture,
-                      onFlashTap: _toggleFlash,
-                      isFlashActive: _currentFlashMode == FlashMode.torch,
+                    if (_isCameraInitialized && _controller != null)
+                      OverflowBox(
+                        maxWidth: double.infinity,
+                        child: AspectRatio(
+                          aspectRatio: 1 / _controller!.value.aspectRatio,
+                          child: CameraPreview(_controller!),
+                        ),
+                      )
+                    else
+                      GlassTheme.meshBackground(),
+
+                    if (_isCameraInitialized) const CameraOverlay(),
+
+                    SafeArea(
+                      child: Column(
+                        children: [
+                          CameraHeader(onClose: () => Navigator.pop(context)),
+                          const Spacer(),
+                          CameraControls(
+                            onGalleryTap: () => _pickImage(ImageSource.gallery),
+                            onCaptureTap: _takePicture,
+                            onFlashTap: _toggleFlash,
+                            isFlashActive: _currentFlashMode == FlashMode.torch,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
-                ),
-              ),
-            ],
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

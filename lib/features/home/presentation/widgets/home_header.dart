@@ -43,7 +43,7 @@ class HomeHeader extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
-                  context.read<AuthBloc>().add(LogoutRequested());
+                  context.read<AuthBloc>().add(const LogoutRequested());
                 },
                 icon: Icon(
                   Icons.logout_rounded,

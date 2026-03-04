@@ -153,7 +153,7 @@ class CameraOverlay extends StatelessWidget {
       bottom: top == 1 ? 0 : null,
       left: left == 0 ? 0 : null,
       right: left == 1 ? 0 : null,
-      child: Container(
+      child: SizedBox(
         width: length,
         height: length,
         child: CustomPaint(

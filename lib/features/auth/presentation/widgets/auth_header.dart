@@ -20,7 +20,7 @@ class AuthHeader extends StatelessWidget {
       children: [
         Text(
           tag,
-          style: TextStyle(
+          style: const TextStyle(
             color: GlassTheme.accentBlue,
             fontSize: 10,
             fontWeight: FontWeight.w800,

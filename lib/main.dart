@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
+import 'package:visionsnap/features/detection/presentation/bloc/detection_bloc.dart';
 
 import 'core/constants/api_constants.dart';
 import 'core/theme/glass_theme.dart';
@@ -122,6 +123,7 @@ class _VisionSnapAppState extends State<VisionSnapApp> {
         ),
         // Upload BLoC - Add this
         BlocProvider(create: (_) => di.sl<UploadBloc>()),
+        BlocProvider(create: (_) => di.sl<DetectionBloc>()),
       ],
       child: MaterialApp(
         navigatorKey: _navigatorKey,

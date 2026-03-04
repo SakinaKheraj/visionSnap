@@ -7,7 +7,7 @@ import '../repositories/detection_repository.dart';
 class DetectItems implements UseCase<DetectionResult, DetectItemsParams> {
   final DetectionRepository repository;
 
-  DetectItems({required this.repository});
+  DetectItems(this.repository);
 
   @override
   Future<Either<Failure, DetectionResult>> call(
@@ -23,9 +23,6 @@ class DetectItems implements UseCase<DetectionResult, DetectItemsParams> {
 class DetectItemsParams {
   final String imageUrl;
   final String uploadId;
-  
-  DetectItemsParams({
-    required this.imageUrl,
-    required this.uploadId,
-  });
+
+  DetectItemsParams({required this.imageUrl, required this.uploadId});
 }

@@ -12,7 +12,7 @@ class UploadImageEvent extends UploadEvent {
   final File imageFile;
   final String source;
 
-  UploadImageEvent({required this.imageFile, required this.source});
+  const UploadImageEvent({required this.imageFile, required this.source});
 
   @override
   List<Object?> get props => [imageFile, source];

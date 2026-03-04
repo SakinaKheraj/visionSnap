@@ -136,8 +136,8 @@ class _ResultScreenState extends State<ResultScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildCircleButton(Icons.arrow_back_rounded, onTap: () => Navigator.pop(context)),
-          Column(
-            children: const [
+          const Column(
+            children: [
               Text(
                 'SCANNED RESULT',
                 style: TextStyle(
@@ -246,11 +246,11 @@ class _ResultScreenState extends State<ResultScreen> {
           color: GlassTheme.accentBlue,
           child: InkWell(
             onTap: () => Navigator.pop(context),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.camera_alt_rounded, color: Colors.white, size: 20),
                   SizedBox(width: 10),
                   Text(

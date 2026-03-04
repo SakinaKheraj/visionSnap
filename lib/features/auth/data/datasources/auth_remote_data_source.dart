@@ -26,7 +26,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   @override
   Future<UserModel?> getCurrentUser() async {
     try {
-      final user = await supabaseClient.auth.currentUser;
+      final user = supabaseClient.auth.currentUser;
 
       if (user == null) return null;
 

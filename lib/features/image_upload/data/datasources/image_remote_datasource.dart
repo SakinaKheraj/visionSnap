@@ -49,7 +49,7 @@ class ImageRemoteDatasourceImpl extends ImageRemoteDatasource {
   }) async {
     try {
       // generate unique filename
-      final uuid = const Uuid();
+      const uuid = Uuid();
       final fileExtension = imageFile.path.split('.').last;
       final fileName = '${uuid.v4()}.$fileExtension';
       final filePath = '$userId/$fileName';
@@ -58,7 +58,7 @@ class ImageRemoteDatasourceImpl extends ImageRemoteDatasource {
       await supabaseClient.storage.from('uploads').upload(filePath, imageFile);
 
       // get public url
-      final imageUrl = await supabaseClient.storage
+      final imageUrl = supabaseClient.storage
           .from('uploads')
           .getPublicUrl(filePath);
 
